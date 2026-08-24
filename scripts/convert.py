@@ -1,4 +1,5 @@
 import json
+import os
 import re
 from urllib.parse import unquote
 import requests
@@ -6,13 +7,41 @@ from openpyxl import load_workbook
 
 INPUT_FILE = "Debi-Dorshon.xlsx"
 OUTPUT_FILE = "debi_dorshon.json"
+CACHE_FILE = "url_cache.json"
 
 
-def extract_coordinates(url, session):
+def load_cache():
+    """Load URL-to-coordinates cache from file if it exists."""
+    if os.path.exists(CACHE_FILE):
+        try:
+            with open(CACHE_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"⚠️ Warning: Could not read cache file ({e}). Starting with fresh cache.")
+    return {}
+
+
+def save_cache(cache):
+    """Save URL-to-coordinates cache to file."""
+    try:
+        with open(CACHE_FILE, "w", encoding="utf-8") as f:
+            json.dump(cache, f, indent=2, ensure_ascii=False)
+    except Exception as e:
+        print(f"⚠️ Warning: Could not save cache file ({e}).")
+
+
+def extract_coordinates(url, session, cache):
     """
-    Extract latitude/longitude from Google Maps short/redirect URLs using
-    URL patterns or HTML staticmap metadata fallbacks.
+    Extract latitude/longitude from Google Maps short/redirect URLs.
+    Checks memory/file cache first. Only makes HTTP requests if the URL is new.
     """
+    # 1. Check cache first
+    if url in cache and cache[url] is not None:
+        cached_loc = cache[url]
+        if isinstance(cached_loc, dict) and "latitude" in cached_loc and "longitude" in cached_loc:
+            return cached_loc["latitude"], cached_loc["longitude"], True
+
+    # 2. Fetch via network if not in cache
     try:
         response = session.get(
             url,
@@ -22,37 +51,47 @@ def extract_coordinates(url, session):
 
         final_url = unquote(response.url)
 
-        # 1. Pattern !3d<lat>!4d<lng>
+        # Pattern 1: !3d<lat>!4d<lng>
         match = re.search(r'!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)', final_url)
         if match:
-            return float(match.group(1)), float(match.group(2))
+            lat, lng = float(match.group(1)), float(match.group(2))
+            cache[url] = {"latitude": lat, "longitude": lng}
+            return lat, lng, False
 
-        # 2. Pattern @<lat>,<lng>
+        # Pattern 2: @<lat>,<lng>
         match = re.search(r'@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)', final_url)
         if match:
-            return float(match.group(1)), float(match.group(2))
+            lat, lng = float(match.group(1)), float(match.group(2))
+            cache[url] = {"latitude": lat, "longitude": lng}
+            return lat, lng, False
 
-        # 3. staticmap center=<lat>%2C<lng> in HTML content
+        # Pattern 3: staticmap center=<lat>%2C<lng> in HTML content
         match = re.search(r'center=(-?\d+(?:\.\d+)?)%2C(-?\d+(?:\.\d+)?)', response.text)
         if match:
-            return float(match.group(1)), float(match.group(2))
+            lat, lng = float(match.group(1)), float(match.group(2))
+            cache[url] = {"latitude": lat, "longitude": lng}
+            return lat, lng, False
 
-        # 4. staticmap center=<lat>,<lng> unescaped
+        # Pattern 4: staticmap center=<lat>,<lng> unescaped
         match = re.search(r'center=(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)', response.text)
         if match:
-            return float(match.group(1)), float(match.group(2))
+            lat, lng = float(match.group(1)), float(match.group(2))
+            cache[url] = {"latitude": lat, "longitude": lng}
+            return lat, lng, False
 
-        # 5. [null,null,lat,lng] JS array structure
+        # Pattern 5: [null,null,lat,lng] JS array structure
         match = re.search(r'\[null,null,(-?\d+\.\d+),(-?\d+\.\d+)\]', response.text)
         if match:
-            return float(match.group(1)), float(match.group(2))
+            lat, lng = float(match.group(1)), float(match.group(2))
+            cache[url] = {"latitude": lat, "longitude": lng}
+            return lat, lng, False
 
         print("  ❌ Coordinates not found")
 
     except Exception as e:
         print(f"  ❌ Error fetching coordinates: {e}")
 
-    return None, None
+    return None, None, False
 
 
 def parse_metro(val):
@@ -87,6 +126,9 @@ def main():
     print("Loading workbook...")
     workbook = load_workbook(INPUT_FILE, data_only=True)
 
+    cache = load_cache()
+    print(f"Loaded {len(cache)} cached coordinates from {CACHE_FILE}")
+
     session = requests.Session()
     session.headers.update({
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -95,8 +137,9 @@ def main():
 
     all_pandals = []
     total_links = 0
-    successful = 0
-    failed = 0
+    cached_count = 0
+    fetched_count = 0
+    failed_count = 0
 
     for sheet_name in workbook.sheetnames:
         print(f"\n==============================")
@@ -162,12 +205,15 @@ def main():
                             url = loc_cell.hyperlink.target
                             if "google" in url or "goo.gl" in url:
                                 total_links += 1
-                                print(f"Found link for [{cluster_name}] '{pandal_name}': {url}")
-                                latitude, longitude = extract_coordinates(url, session)
-                                if latitude is not None:
-                                    successful += 1
+                                latitude, longitude, from_cache = extract_coordinates(url, session, cache)
+                                if from_cache:
+                                    cached_count += 1
+                                elif latitude is not None:
+                                    fetched_count += 1
+                                    print(f"  ⚡ Fetched new: [{cluster_name}] '{pandal_name}' -> ({latitude}, {longitude})")
                                 else:
-                                    failed += 1
+                                    failed_count += 1
+                                    print(f"  ❌ Failed to extract: [{cluster_name}] '{pandal_name}' ({url})")
 
                         metro_val = sheet.cell(data_r, c_metro).value if c_metro <= sheet.max_column else None
                         station_val = sheet.cell(data_r, c_station).value if c_station <= sheet.max_column else None
@@ -198,7 +244,10 @@ def main():
                         all_pandals.append(pandal_obj)
                         data_r += 1
 
-    # Save JSON
+    # Save updated cache
+    save_cache(cache)
+
+    # Save JSON output
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         json.dump(all_pandals, f, indent=2, ensure_ascii=False)
 
@@ -206,11 +255,13 @@ def main():
     print("           FINAL SUMMARY")
     print("=" * 40)
     print(f"Total Pandals Processed: {len(all_pandals)}")
-    print(f"Maps links found       : {total_links}")
-    print(f"Coordinates extracted  : {successful}")
-    print(f"Coordinates failed     : {failed}")
+    print(f"Total Maps Links Found : {total_links}")
+    print(f"Loaded From Cache      : {cached_count}")
+    print(f"Newly Fetched via Web  : {fetched_count}")
+    print(f"Failed to Resolve      : {failed_count}")
     print("=" * 40)
-    print(f"\nJSON created: {OUTPUT_FILE}")
+    print(f"\nJSON updated: {OUTPUT_FILE}")
+    print(f"Cache saved : {CACHE_FILE}")
 
 
 if __name__ == "__main__":
