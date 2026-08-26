@@ -197,54 +197,6 @@
     }
   },
   {
-    "name": "Chalta Bagan Sarbojonin",
-    "region": "North",
-    "cluster": "Manicktala-Girish Park",
-    "location": {
-      "latitude": null,
-      "longitude": null
-    },
-    "nearest_metro": {
-      "name": "Girish Park",
-      "line": "Blue"
-    },
-    "nearest_station": {
-      "name": "Bidhannagar Road"
-    }
-  },
-  {
-    "name": "Chorebagan Sarbojonin",
-    "region": "North",
-    "cluster": "Manicktala-Girish Park",
-    "location": {
-      "latitude": 22.5834284,
-      "longitude": 88.3635965
-    },
-    "nearest_metro": {
-      "name": "Girish Park",
-      "line": "Blue"
-    },
-    "nearest_station": {
-      "name": "Bidhannagar Road"
-    }
-  },
-  {
-    "name": "Pathuriaghata Pancher Pally",
-    "region": "North",
-    "cluster": "Manicktala-Girish Park",
-    "location": {
-      "latitude": 22.5890849,
-      "longitude": 88.3556628
-    },
-    "nearest_metro": {
-      "name": "Girish Park",
-      "line": "Blue"
-    },
-    "nearest_station": {
-      "name": "Barabazar"
-    }
-  },
-  {
     "name": "Ahiritola Sarbojonin",
     "region": "North",
     "cluster": "Ahiritola-Kumartuli-Bagbazar",
@@ -375,6 +327,25 @@
     },
     "nearest_ferry": {
       "name": "Bagbazar Ferry"
+    }
+  },
+  {
+    "name": "Nimtala Sarbojonin",
+    "region": "North",
+    "cluster": "Ahiritola-Kumartuli-Bagbazar",
+    "location": {
+      "latitude": 22.6557952,
+      "longitude": 88.4211712
+    },
+    "nearest_metro": {
+      "name": "Sovabazar-Sutanuti",
+      "line": "Blue"
+    },
+    "nearest_station": {
+      "name": "Sovabazar Ahiritola"
+    },
+    "nearest_ferry": {
+      "name": "Ahiritola Ferry"
     }
   },
   {
@@ -1633,6 +1604,213 @@
     },
     "nearest_station": {
       "name": "Khidirpur"
+    }
+  },
+  {
+    "name": "Mohammad Ali Park",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": null,
+      "longitude": null
+    }
+  },
+  {
+    "name": "Sealdah Athletic Club",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": null,
+      "longitude": null
+    }
+  },
+  {
+    "name": "College Square Sarbojanin Durgotsav",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": null,
+      "longitude": null
+    }
+  },
+  {
+    "name": "Santosh Mitra Square",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": null,
+      "longitude": null
+    }
+  },
+  {
+    "name": "Lebutala",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": null,
+      "longitude": null
+    }
+  },
+  {
+    "name": "Subodh Mallick Square",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": null,
+      "longitude": null
+    }
+  },
+  {
+    "name": "Taltala Sarbojonin",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": null,
+      "longitude": null
+    }
+  },
+  {
+    "name": "14 Pally Udayan Sangha",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": 22.5575857,
+      "longitude": 88.3669753
+    }
+  },
+  {
+    "name": "37 Pally Sarbojanin Durgotsab",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": null,
+      "longitude": null
+    }
+  },
+  {
+    "name": "47 Pally Jubak Brinda Durga Puja",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": null,
+      "longitude": null
+    }
+  },
+  {
+    "name": "Central Calcutta Youth Association",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": null,
+      "longitude": null
+    }
+  },
+  {
+    "name": "Entally Matribhumi Durga Puja",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": null,
+      "longitude": null
+    }
+  },
+  {
+    "name": "Entally Sarbojanin Sri Sri Durga Puja",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": null,
+      "longitude": null
+    }
+  },
+  {
+    "name": "Chowringhee High School Sarbojanin Durgotsav",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": null,
+      "longitude": null
+    }
+  },
+  {
+    "name": "Kanai Dhar Lane Adhibasi Brinda",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": null,
+      "longitude": null
+    }
+  },
+  {
+    "name": "Machua Bazar Sarbajanik Durga Puja Samity",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": null,
+      "longitude": null
+    }
+  },
+  {
+    "name": "New Market Sarbojanin Sri Sri Durga Puja",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": null,
+      "longitude": null
+    }
+  },
+  {
+    "name": "Pallir Yubak Brinda Durga Puja",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": null,
+      "longitude": null
+    }
+  },
+  {
+    "name": "Shishu Palan Foundation",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": null,
+      "longitude": null
+    }
+  },
+  {
+    "name": "Wellington Nagarik Kalyan Samity",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": null,
+      "longitude": null
+    }
+  },
+  {
+    "name": "Jorasanko 7 er Pally",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": null,
+      "longitude": null
+    }
+  },
+  {
+    "name": "Jorasanko Sadharon Durgotsav Samity",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": null,
+      "longitude": null
+    }
+  },
+  {
+    "name": "Darpanarayan Sarbojonin",
+    "region": "Central",
+    "cluster": "Central Kolkata",
+    "location": {
+      "latitude": 22.6557952,
+      "longitude": 88.4211712
     }
   },
   {
