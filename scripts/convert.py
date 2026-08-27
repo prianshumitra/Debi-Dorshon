@@ -1,13 +1,15 @@
 import json
 import os
 import re
+from typing import Any
 from urllib.parse import unquote
 import requests
 from openpyxl import load_workbook
 
-INPUT_FILE = "Debi-Dorshon.xlsx"
-OUTPUT_FILE = "debi_dorshon.json"
-CACHE_FILE = "url_cache.json"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+INPUT_FILE = os.path.join(BASE_DIR, "Debi-Dorshon.xlsx")
+OUTPUT_FILE = os.path.abspath(os.path.join(BASE_DIR, "..", "server", "data", "debi_dorshon.json"))
+CACHE_FILE = os.path.join(BASE_DIR, "url_cache.json")
 
 
 def load_cache():
@@ -219,7 +221,7 @@ def main():
                         station_val = sheet.cell(data_r, c_station).value if c_station <= sheet.max_column else None
                         ferry_val = sheet.cell(data_r, c_ferry).value if c_ferry <= sheet.max_column else None
 
-                        pandal_obj = {
+                        pandal_obj: dict[str, Any] = {
                             "name": pandal_name,
                             "region": sheet_name,
                             "cluster": cluster_name,
@@ -248,6 +250,7 @@ def main():
     save_cache(cache)
 
     # Save JSON output
+    os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         json.dump(all_pandals, f, indent=2, ensure_ascii=False)
 

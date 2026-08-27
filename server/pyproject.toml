@@ -1,0 +1,22 @@
+[project]
+name = "debi-dorshon-server"
+version = "0.1.0"
+description = "FastAPI Backend for Debi-Dorshon Durga Puja Guide App"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.110.0",
+    "uvicorn[standard]>=0.28.0",
+    "motor>=3.3.2",
+    "pymongo>=4.6.0",
+    "pydantic>=2.6.0",
+    "pydantic-settings>=2.2.0",
+    "python-dotenv>=1.0.1",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

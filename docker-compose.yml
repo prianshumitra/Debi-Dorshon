@@ -1,0 +1,39 @@
+services:
+  # MongoDB Database Service
+  mongodb:
+    image: mongo:7.0
+    container_name: debi_dorshon_mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # FastAPI Backend Service
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: debi_dorshon_server
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - PROJECT_NAME=Debi-Dorshon API
+      - API_V1_STR=/api/v1
+      - HOST=0.0.0.0
+      - PORT=8000
+      - MONGODB_URL=mongodb://mongodb:27017
+      - MONGODB_DB_NAME=debi_dorshon_db
+      - PANDAL_COLLECTION_NAME=pandals
+    depends_on:
+      mongodb:
+        condition: service_healthy
+
+volumes:
+  mongo_data:
