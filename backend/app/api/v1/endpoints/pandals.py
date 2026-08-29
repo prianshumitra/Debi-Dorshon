@@ -10,7 +10,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from app.core.database import get_database
-from app.schemas.pandal import PandalResponse, PandalCreate
+from app.schemas.pandal import PandalResponse
 from app.services.pandal_service import PandalService
 
 router = APIRouter()
@@ -62,16 +62,3 @@ async def get_pandal(
         )
     return pandal
 
-
-@router.post(
-    "/",
-    response_model=PandalResponse,
-    status_code=status.HTTP_201_CREATED,
-    summary="Add a new pandal"
-)
-async def create_pandal(
-    pandal_in: PandalCreate,
-    service: PandalService = Depends(get_pandal_service)
-):
-    """Create a new Durga Puja pandal entry."""
-    return await service.create_pandal(pandal_in)

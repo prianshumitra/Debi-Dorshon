@@ -9,7 +9,6 @@ from typing import List, Optional
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from app.core.config import settings
-from app.schemas.pandal import PandalCreate, PandalUpdate
 
 
 class PandalService:
@@ -51,13 +50,7 @@ class PandalService:
             doc["id"] = doc["_id"]
         return doc
 
-    async def create_pandal(self, pandal_data: PandalCreate) -> dict:
-        """Create a new pandal in MongoDB."""
-        data_dict = pandal_data.model_dump(exclude_unset=True)
-        result = await self.collection.insert_one(data_dict)
-        data_dict["_id"] = str(result.inserted_id)
-        return data_dict
-
     async def count_pandals(self) -> int:
         """Get total count of pandals in database."""
         return await self.collection.count_documents({})
+

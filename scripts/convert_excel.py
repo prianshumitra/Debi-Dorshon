@@ -7,9 +7,10 @@ import requests
 from openpyxl import load_workbook
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-INPUT_FILE = os.path.join(BASE_DIR, "Debi-Dorshon.xlsx")
-OUTPUT_FILE = os.path.abspath(os.path.join(BASE_DIR, "..", "server", "data", "debi_dorshon.json"))
-CACHE_FILE = os.path.join(BASE_DIR, "url_cache.json")
+PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, ".."))
+INPUT_FILE = os.path.join(PROJECT_ROOT, "data", "raw", "Debi-Dorshon.xlsx")
+OUTPUT_FILE = os.path.join(PROJECT_ROOT, "data", "processed", "debi_dorshon.json")
+CACHE_FILE = os.path.join(PROJECT_ROOT, "data", "processed", "url_cache.json")
 
 
 def load_cache():

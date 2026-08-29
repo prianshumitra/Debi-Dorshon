@@ -20,25 +20,9 @@ class TransportInfoSchema(BaseModel):
 
 
 class PandalBase(BaseModel):
-    name: str = Field(..., example="Shikdar Bagan")
-    region: Optional[str] = Field(None, example="North")
-    cluster: Optional[str] = Field(None, example="Shyambazar")
-    location: Optional[LocationSchema] = None
-    nearest_metro: Optional[TransportInfoSchema] = None
-    nearest_station: Optional[TransportInfoSchema] = None
-    nearest_ferry: Optional[TransportInfoSchema] = None
-
-
-class PandalCreate(PandalBase):
-    """Schema used when creating a new pandal via POST request."""
-    pass
-
-
-class PandalUpdate(BaseModel):
-    """Schema used when updating an existing pandal (partial updates supported)."""
-    name: Optional[str] = None
-    region: Optional[str] = None
-    cluster: Optional[str] = None
+    name: str = Field(..., json_schema_extra={"example": "Shikdar Bagan"})
+    region: Optional[str] = Field(None, json_schema_extra={"example": "North"})
+    cluster: Optional[str] = Field(None, json_schema_extra={"example": "Shyambazar"})
     location: Optional[LocationSchema] = None
     nearest_metro: Optional[TransportInfoSchema] = None
     nearest_station: Optional[TransportInfoSchema] = None
@@ -47,9 +31,10 @@ class PandalUpdate(BaseModel):
 
 class PandalResponse(PandalBase):
     """Schema returned in API responses. Includes MongoDB string ID."""
-    id: str = Field(..., alias="_id", example="64d3f1a2b... ")
+    id: str = Field(..., alias="_id", json_schema_extra={"example": "64d3f1a2b3c4d5e6f7a8b9c0"})
 
     model_config = {
         "populate_by_name": True,
         "arbitrary_types_allowed": True
     }
+

@@ -13,10 +13,10 @@ ENV UV_COMPILE_BYTECODE=1
 WORKDIR /app
 
 # Copy dependency manifests
-COPY pyproject.toml uv.lock requirements.txt ./
+COPY pyproject.toml uv.lock ./
 
-# Install dependencies using uv into the container environment
-RUN uv pip install --system -r requirements.txt
+# Install dependencies using uv into system environment
+RUN uv pip install --system -r pyproject.toml
 
 # Copy application source code and dataset
 COPY . .

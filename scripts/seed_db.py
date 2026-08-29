@@ -2,10 +2,10 @@
 scripts/seed_db.py
 -------------------
 Database Seeding Script for Debi-Dorshon.
-Reads `debi_dorshon.json` in `scripts/` and imports pandal data into MongoDB.
+Reads `debi_dorshon.json` from `data/processed/` and imports pandal data into MongoDB.
 
 Usage:
-    uv run --project server python scripts/seed_db.py
+    uv run --project backend python scripts/seed_db.py
 """
 
 import asyncio
@@ -18,13 +18,17 @@ from pathlib import Path
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
-# Add server directory to python path for settings import
-SERVER_DIR = Path(__file__).resolve().parent.parent / "server"
-sys.path.insert(0, str(SERVER_DIR))
+# Ensure backend directory is in sys.path if executed from root
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+BACKEND_DIR = PROJECT_ROOT / "backend"
+if str(BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(BACKEND_DIR))
 
-# Load server/.env file if available
+# Load .env file if available
 from dotenv import load_dotenv
-env_path = SERVER_DIR / ".env"
+env_path = BACKEND_DIR / ".env"
+if not env_path.exists():
+    env_path = PROJECT_ROOT / ".env"
 if env_path.exists():
     load_dotenv(dotenv_path=env_path)
 
@@ -33,8 +37,7 @@ from app.core.config import settings
 
 
 async def seed_data():
-    script_dir = Path(__file__).resolve().parent
-    json_path = script_dir / "debi_dorshon.json"
+    json_path = PROJECT_ROOT / "data" / "processed" / "debi_dorshon.json"
 
     if not json_path.exists():
         print(f"[x] Error: JSON file not found at '{json_path}'")
@@ -75,3 +78,4 @@ async def seed_data():
 
 if __name__ == "__main__":
     asyncio.run(seed_data())
+
