@@ -1,6 +1,6 @@
 # 🗺️ Debi-Dorshon API Routes Reference
 
-This document provides a comprehensive reference for all available API endpoints in the **Debi-Dorshon** backend service for future developers and frontend integration.
+This document provides a comprehensive reference for all available API endpoints in the **Debi-Dorshon** backend service for frontend and client developers.
 
 ---
 
@@ -22,7 +22,14 @@ This document provides a comprehensive reference for all available API endpoints
 | `GET` | `/api/v1/health` | Health Check (Server & MongoDB) | ❌ No |
 | `GET` | `/api/v1/pandals/` | List all pandals (Filter, Search & Paginate) | ❌ No |
 | `GET` | `/api/v1/pandals/{pandal_id}` | Get pandal details by ObjectId | ❌ No |
-| `POST` | `/api/v1/pandals/` | Add a new Durga Puja pandal | ❌ No |
+| `GET` | `/api/v1/transit/metro/stations` | Ride by Metro: List all Metro stations | ❌ No |
+| `GET` | `/api/v1/transit/metro/pandals` | Ride by Metro: Get pandals near a Metro station | ❌ No |
+| `GET` | `/api/v1/transit/train/stations` | Ride by Train: List all Railway stations | ❌ No |
+| `GET` | `/api/v1/transit/train/pandals` | Ride by Train: Get pandals near a Railway station | ❌ No |
+| `POST` | `/api/v1/trip/plan` | Puja Parikrama: Generate itinerary from GPS origin | ❌ No |
+
+> [!NOTE]
+> Pandal data is managed exclusively via internal database seeding scripts. Public mutation endpoints (`POST/PUT/DELETE /pandals`) are disabled.
 
 ---
 
@@ -60,13 +67,22 @@ This document provides a comprehensive reference for all available API endpoints
     "line": "Blue Line"
   },
   "nearest_station": {
-    "name": "Kolkata Railway Station",
-    "line": null
+    "name": "Kolkata Railway Station"
   },
   "nearest_ferry": {
-    "name": "Bagbazar Ghat",
-    "line": null
+    "name": "Bagbazar Ghat"
   }
+}
+```
+
+### 4. `TripPlanRequest`
+```json
+{
+  "origin_latitude": 22.5986,
+  "origin_longitude": 88.3712,
+  "region": "North",
+  "cluster": "Shyambazar",
+  "max_pandals": 5
 }
 ```
 
@@ -75,162 +91,43 @@ This document provides a comprehensive reference for all available API endpoints
 ## 🛰️ Detailed Endpoint Specifications
 
 ### 1. Welcome Root Endpoint
-Returns a basic welcome message and navigation links.
-
+Returns a basic welcome message and documentation links.
 - **Method**: `GET`
 - **Path**: `/`
-- **Response**: `200 OK`
-```json
-{
-  "message": "Welcome to Debi-Dorshon API!",
-  "docs": "/docs",
-  "health": "/api/v1/health"
-}
-```
-
----
 
 ### 2. Health Check
 Verifies server health and active connection to MongoDB.
-
 - **Method**: `GET`
 - **Path**: `/api/v1/health`
-- **Response**: `200 OK`
-```json
-{
-  "status": "online",
-  "database": "healthy",
-  "service": "Debi-Dorshon Backend API"
-}
-```
 
----
-
-### 3. List Pandals (With Search, Filters & Pagination)
-Retrieves a list of Durga Puja pandals with optional query parameters.
-
+### 3. List Pandals
 - **Method**: `GET`
 - **Path**: `/api/v1/pandals/`
-- **Query Parameters**:
-
-| Parameter | Type | Required | Default | Description |
-| :--- | :--- | :--- | :--- | :--- |
-| `region` | `string` | ❌ No | `null` | Case-insensitive filter by region (e.g. `North`, `South`) |
-| `cluster` | `string` | ❌ No | `null` | Case-insensitive filter by cluster (e.g. `Shyambazar`, `Ahiritola`) |
-| `search` | `string` | ❌ No | `null` | Case-insensitive search on pandal `name` |
-| `skip` | `integer` | ❌ No | `0` | Offset for pagination (`ge=0`) |
-| `limit` | `integer` | ❌ No | `100` | Max items returned (`ge=1`, `le=500`) |
-
-- **Example Request**:
-  `GET /api/v1/pandals/?region=North&search=Shikdar&skip=0&limit=10`
-
-- **Response**: `200 OK`
-```json
-[
-  {
-    "id": "66ce3f890123456789abcdef",
-    "name": "Shikdar Bagan Pushparaj",
-    "region": "North",
-    "cluster": "Shyambazar",
-    "location": {
-      "latitude": 22.5986,
-      "longitude": 88.3712
-    },
-    "nearest_metro": {
-      "name": "Shyambazar",
-      "line": "Blue Line"
-    },
-    "nearest_station": {
-      "name": "Kolkata Station"
-    },
-    "nearest_ferry": null
-  }
-]
-```
-
----
+- **Query Parameters**: `region`, `cluster`, `search`, `skip`, `limit`
 
 ### 4. Get Pandal by ID
-Retrieve details of a single pandal using its 24-character hexadecimal MongoDB `ObjectId`.
-
 - **Method**: `GET`
 - **Path**: `/api/v1/pandals/{pandal_id}`
-- **Path Parameters**:
-  - `pandal_id` (`string`, required): MongoDB ObjectId (e.g. `66ce3f890123456789abcdef`)
 
-- **Responses**:
-  - `200 OK`: Returns single `PandalResponse` object.
-  - `404 Not Found`:
-    ```json
-    {
-      "detail": "Pandal with ID 'invalid_id' not found."
-    }
-    ```
+### 5. Ride by Metro: Metro Stations
+- **Method**: `GET`
+- **Path**: `/api/v1/transit/metro/stations`
 
----
+### 6. Ride by Metro: Pandals by Metro Station
+- **Method**: `GET`
+- **Path**: `/api/v1/transit/metro/pandals`
+- **Query Parameters**: `station_name` (required), `line` (optional)
 
-### 5. Create Pandal
-Add a new pandal entry into the MongoDB collection.
+### 7. Ride by Train: Railway Stations
+- **Method**: `GET`
+- **Path**: `/api/v1/transit/train/stations`
 
+### 8. Ride by Train: Pandals by Train Station
+- **Method**: `GET`
+- **Path**: `/api/v1/transit/train/pandals`
+- **Query Parameters**: `station_name` (required)
+
+### 9. Puja Parikrama: Plan Trip Itinerary
+Stateless route calculation calculating nearest candidate pandals from GPS coordinates.
 - **Method**: `POST`
-- **Path**: `/api/v1/pandals/`
-- **Header**: `Content-Type: application/json`
-- **Request Body** (`PandalCreate`):
-```json
-{
-  "name": "Bagbazar Sarbojanin",
-  "region": "North",
-  "cluster": "Bagbazar",
-  "location": {
-    "latitude": 22.6025,
-    "longitude": 88.3670
-  },
-  "nearest_metro": {
-    "name": "Shyambazar",
-    "line": "Blue Line"
-  },
-  "nearest_station": {
-    "name": "Kolkata Station"
-  },
-  "nearest_ferry": {
-    "name": "Bagbazar Ghat"
-  }
-}
-```
-
-- **Responses**:
-  - `201 Created`: Returns newly created `PandalResponse` object with generated `id`.
-  - `422 Unprocessable Entity`: Triggered if payload violates field validation.
-
----
-
-## 💻 Code Snippets / Example Usage
-
-### JavaScript (`fetch`)
-```javascript
-// Fetch pandals in South region
-async function getSouthPandals() {
-  const res = await fetch('http://localhost:8000/api/v1/pandals/?region=South');
-  const pandals = await res.json();
-  console.log(pandals);
-}
-```
-
-### cURL
-```bash
-# List all pandals (first 10)
-curl -X GET "http://localhost:8000/api/v1/pandals/?skip=0&limit=10"
-
-# Search pandal by name
-curl -X GET "http://localhost:8000/api/v1/pandals/?search=Hatibagan"
-
-# Add a new pandal
-curl -X POST "http://localhost:8000/api/v1/pandals/" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "name": "Chetla Agrani",
-       "region": "South",
-       "cluster": "Kalighat",
-       "location": { "latitude": 22.5186, "longitude": 88.3432 }
-     }'
-```
+- **Path**: `/api/v1/trip/plan`

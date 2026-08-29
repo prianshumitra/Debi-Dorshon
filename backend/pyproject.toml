@@ -1,7 +1,7 @@
 [project]
-name = "debi-dorshon-server"
+name = "debi-dorshon-backend"
 version = "0.1.0"
-description = "FastAPI Backend for Debi-Dorshon Durga Puja Guide App"
+description = "FastAPI Backend & Data Pipeline for Debi-Dorshon Durga Puja Guide App"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
@@ -12,6 +12,10 @@ dependencies = [
     "pydantic>=2.6.0",
     "pydantic-settings>=2.2.0",
     "python-dotenv>=1.0.1",
+    "openpyxl>=3.1.5",
+    "requests>=2.31.0",
+    "pytest>=8.0.0",
+    "httpx>=0.27.0",
 ]
 
 [tool.hatch.build.targets.wheel]

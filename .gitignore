@@ -1,6 +1,7 @@
 # Environment variables
 .env
 *.env
+!.env.example
 
 # Python / Virtual Environments
 __pycache__/
@@ -9,6 +10,8 @@ __pycache__/
 .venv/
 venv/
 env/
+.pytest_cache/
+.coverage
 
 # IDE & System
 .vscode/
