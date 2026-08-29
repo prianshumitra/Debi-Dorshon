@@ -27,6 +27,7 @@ This document provides a comprehensive reference for all available API endpoints
 | `GET` | `/api/v1/transit/train/stations` | Ride by Train: List all Railway stations | ❌ No |
 | `GET` | `/api/v1/transit/train/pandals` | Ride by Train: Get pandals near a Railway station | ❌ No |
 | `POST` | `/api/v1/trip/plan` | Puja Parikrama: Generate itinerary from GPS origin | ❌ No |
+| `POST` | `/api/v1/route/plan` | A → B Route Planner: OSRM road route-based itinerary & polyline | ❌ No |
 
 > [!NOTE]
 > Pandal data is managed exclusively via internal database seeding scripts. Public mutation endpoints (`POST/PUT/DELETE /pandals`) are disabled.
@@ -86,6 +87,22 @@ This document provides a comprehensive reference for all available API endpoints
 }
 ```
 
+### 5. `RoutePlanRequest` (A → B Route Planner)
+```json
+{
+  "origin": {
+    "latitude": 22.5726,
+    "longitude": 88.3639
+  },
+  "destination": {
+    "latitude": 22.5958,
+    "longitude": 88.2636
+  },
+  "max_detour_km": 1.0,
+  "max_pandals": 15
+}
+```
+
 ---
 
 ## 🛰️ Detailed Endpoint Specifications
@@ -131,3 +148,9 @@ Verifies server health and active connection to MongoDB.
 Stateless route calculation calculating nearest candidate pandals from GPS coordinates.
 - **Method**: `POST`
 - **Path**: `/api/v1/trip/plan`
+
+### 10. A → B Road Route-Based Puja Pandal Planner
+Stateless road route-based itinerary planner evaluating candidate pandals against an OSRM OpenStreetMap polyline.
+- **Method**: `POST`
+- **Path**: `/api/v1/route/plan`
+

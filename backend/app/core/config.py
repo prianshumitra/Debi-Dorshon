@@ -22,6 +22,10 @@ class Settings(BaseSettings):
     MONGODB_DB_NAME: str = "debi_dorshon_db"
     PANDAL_COLLECTION_NAME: str = "pandals"
 
+    # Routing Engine Settings (OSRM)
+    OSRM_BASE_URL: str = "http://router.project-osrm.org"
+    OSRM_TIMEOUT_SECONDS: float = 10.0
+
     # Configure Pydantic to read from `.env` file
     model_config = SettingsConfigDict(
         env_file=".env",
